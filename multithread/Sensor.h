@@ -38,9 +38,8 @@ public:
     string getSensorID();
     void setTemperature();
     double getTemperature();
-    void setClock();
+    void setClockDate();
     string getClock();
-    void setDate();
     string getDate();
 
     

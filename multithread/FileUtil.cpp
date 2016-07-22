@@ -10,7 +10,11 @@ FileUtil::FileUtil()
     vector<string> temp;
     struct dirent *ptr;
     DIR *pDIR;
-    string base_dir = "/home/tian/devices";
+//	ubuntu dir
+//    string base_dir = "/home/tian/devices";
+//	raspbian dir
+    string base_dir = "/sys/bus/w1/devices";
+
     pDIR = opendir(base_dir.c_str());
 
     while(NULL != (ptr = readdir(pDIR)) )
@@ -59,9 +63,9 @@ void FileUtil::load_configuration() {
         cout << "Cannot open the json file." << endl;
     }
 
-    bool parsingSucessful = reader.parse(jsonFile, root);
+    bool parsingSuccessful = reader.parse(jsonFile, root);
 //    cout << parsingSucessful << endl;
-    if (parsingSucessful) {
+    if (parsingSuccessful) {
 //        initialize rpi_id and sensor_id
         host = root["broker_address"].asString();
         port = root["broker_port"].asInt();

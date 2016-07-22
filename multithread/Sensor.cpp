@@ -20,9 +20,9 @@ Sensor::Sensor(int i):index(i)
         cout << "Cannot open the json file." << endl;
     }
 
-    bool parsingSucessful = reader.parse(jsonFile, root);
+    bool parsingSuccessful = reader.parse(jsonFile, root);
 // cout << parsingSucessful << endl;
-    if (parsingSucessful)
+    if (parsingSuccessful)
     {
 //        initialize sensor_id
         sensor_id = root[folder_name].asString();
@@ -32,10 +32,8 @@ Sensor::Sensor(int i):index(i)
         cout << "cannot parse configuration." << endl;
     };
 	jsonFile.close();
-
 	setTemperature();
-	setClock();
-	setDate();
+	setClockDate();
 
 }
 
@@ -46,11 +44,10 @@ string Sensor::getSensorID()
 }
 
 //Set temperature
-
 void Sensor::setTemperature()
 {
-//    string path = fileutil.getSensorFilePath(index) + "/w1_slave";
-    string path = "/home/tian/devices/28-"+ folder_name +"/w1_slave" ;
+	string path = "/sys/bus/w1/devices/28-" + folder_name + "/w1_salve";
+//    string path = "/home/tian/devices/28-"+ folder_name +"/w1_slave" ;
 //    cout << path << endl;
     char tempData[6];
     double temp;
@@ -61,16 +58,13 @@ void Sensor::setTemperature()
     {
         cerr << "Couldn't open the w1 device. Please check."<< endl;
         exit(1);
-    }
-
-    else
+    }else
     {
         fd.read(buf, 256);
         strncpy(tempData, strstr(buf, "t=") + 2, 5);
         temp = strtof(tempData, NULL);
         temp = temp / 1000;
     }
-
     fd.close();
     delete[] buf;
     temperature = temp;
@@ -84,37 +78,26 @@ double Sensor::getTemperature()
 }
 
 
-
 //setClock
-void Sensor:: setClock()
+void Sensor:: setClockDate()
 {
     time_t nowtime;
     nowtime = time(NULL);
     struct tm *local;
-    local=localtime(&nowtime);
-    char buf[80];
-    strftime(buf, 80, "%H:%M:%S.00", local);
-    clock = buf;
+    local = localtime(&nowtime);
+    char buf_clock[80];
+    char buf_date[80];
+    strftime(buf_clock, 80, "%H:%M:%S.00", local);
+    strftime(buf_date, 80, "%Y-%m-%d", local);
+    clock = buf_clock;
+    date = buf_date;
 //    cout << clock << endl;
 }
-//
-////getClock
+
+//getClock
 string Sensor::getClock()
 {
     return clock;
-}
-
-//setDate
-void Sensor::setDate()
-{
-    time_t nowtime;
-    nowtime = time(NULL);
-    struct tm *local;
-    local=localtime(&nowtime);
-    char buf[80];
-    strftime(buf, 80, "%Y-%m-%d", local);
-    date = buf;
-//    cout<< date << endl;
 }
 
 //getDate
@@ -123,50 +106,3 @@ string Sensor::getDate()
     return date;
 }
 
-
-
-
-//
-//void Sensor::writeReading()
-//{
-//
-//    ofstream sensorReadingFile(sensorFilePath, ios_base::out|ios_base::app);
-//    if(sensorReadingFile.is_open())
-//    {
-//    sensorReadingFile << setw(5) << rpi_id << setw(5) << sensor_id << setprecision(3) << getTemperature() << setw(20) << getClock() << setw(20) << getDate() << endl;
-//    }
-//
-//    if (sensorReadingFile.fail())
-//    {
-//        cerr << "Error on attempted write" << endl;
-//        exit(1);
-//    }
-//
-//}
-
-//put into a JSON object and write to a json file.
-
-
-//convert to JSON and write to a file
-//void FileUtil::writeReading(int rpi_id, int sensor_id, string date, string clock, double temperature, string rod_id)
-//{
-//    mutex mutex;
-//    Json::Value root;
-//    Json::StyleWriter writer;
-//
-//    root["rpi_id"] = Json::value(rpi_id);
-//    root["sensor_id"] = Json::value(sensor_id);
-//    root["temperature"] = Json::value(temperature);
-//    root["clock"] = Json::value(clock);
-//    root["date"] = Json::value(date);
-//    ofstream sensorReadingFile(sensorFilePath, ios_base::out|ios_base::app);
-////lock, others wait
-//    mutex.lock();
-//    wrtier.write(sensorReadingFile, root);
-//
-//    //    else cout << "Error. Unable to open" << fname << endl;
-//    mutex.unlock();
-//    lock_guard<mutex> block_threads_until_finish_this_job(mutex);
-//    f.close();
-//}
-//
