@@ -42,6 +42,7 @@ void Communicator::on_disconnect(int rc) {
 void Communicator::on_publish(int mid) {
     cout << "Message succeed to be published" << endl;
 }
+
 bool Communicator::send_message(const char * _message) {
     int ret = publish(NULL, "sensors", strlen(_message), _message, 1, false);
     return (ret == MOSQ_ERR_SUCCESS);

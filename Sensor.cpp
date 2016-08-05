@@ -4,7 +4,11 @@
 
 
 #include "Sensor.h"
+#include "FileUtil.h"
 //The constructor initialize sensor_id, temperature, clock and date
+
+
+
 Sensor::Sensor(int i):index(i)
 {
     Json::Reader reader;
@@ -34,7 +38,6 @@ Sensor::Sensor(int i):index(i)
 	jsonFile.close();
 	setTemperature();
 	setClockDate();
-
 }
 
 //get sensor_id
@@ -48,7 +51,7 @@ void Sensor::setTemperature()
 {
 	string path = "/sys/bus/w1/devices/28-" + folder_name + "/w1_slave";
 //    string path = "/home/tian/devices/28-"+ folder_name +"/w1_slave" ;
-//    cout << "path"<<path << endl;
+//    cout << "path"<< path << endl;
     char tempData[5];
     double temp;
     char *buf = new char[256];
@@ -85,6 +88,8 @@ void Sensor:: setClockDate()
     time_t nowtime;
     nowtime = time(NULL);
     struct tm *local;
+    struct timeval tv;
+	gettimeofday(&tv, NULL);
     local = localtime(&nowtime);
     char buf_clock[80];
     char buf_date[80];
@@ -93,7 +98,12 @@ void Sensor:: setClockDate()
     clock = buf_clock;
     date = buf_date;
 //    cout << clock << endl;
+
+
+milisecond = tv.tv_sec * 1000  + tv.tv_usec  /1000;
 }
+
+
 
 //getClock
 string Sensor::getClock()
@@ -101,9 +111,15 @@ string Sensor::getClock()
     return clock;
 }
 
+
 //getDate
 string Sensor::getDate()
 {
     return date;
+}
+
+long Sensor::getMilisecond()
+{
+	return milisecond;
 }
 

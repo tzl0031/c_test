@@ -21,7 +21,7 @@
 #include "FileUtil.h"
 #include <sys/types.h>
 #include <cstring>
-
+#include <sys/time.h>
 
 using namespace std;
 
@@ -41,12 +41,7 @@ public:
     void setClockDate();
     string getClock();
     string getDate();
-
-    
-//    string sensorFunction();
-//    void writeReading();
-//    void setSensorFilePath();
-//    string getSensorFilePath();
+	long getMilisecond();
     
   
 private:
@@ -56,6 +51,7 @@ private:
     string sensor_id;
     string folder_name;
     int index;
+    long milisecond;
 
 };
 
